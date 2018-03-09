@@ -1,2 +1,2 @@
 # sqlcmdweb
-My final project is the training juja
+My final project in the training juja
