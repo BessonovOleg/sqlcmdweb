@@ -26,7 +26,7 @@
 
     <h2 class="text-center">Sqlcmd-WEB</h2>
 
-    <form class="form-signin" id="loginform2">
+    <form class="form-signin" id="loginform">
         <input type="text" id="host" class="form-control" placeholder="127.0.0.1:5432" required autofocus>
         <input type="text" id="dbName" class="form-control" placeholder="Database name" required>
         <input type="text" id="login" class="form-control" placeholder="Login" required>
