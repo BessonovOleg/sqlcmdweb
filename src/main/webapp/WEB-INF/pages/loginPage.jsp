@@ -4,7 +4,7 @@
 
 <html>
 <head>
-    <title>SqlCmd</title>
+    <title>Sqlcmd-WEB</title>
 
     <spring:url value="/resources/img/favicon.ico" var="fi"/>
     <link rel="icon" type="image/x-icon" class="js-site-favicon" href="${fi}">
@@ -35,7 +35,7 @@
     </form>
 
     <c:if test="${not empty error}">
-        <div class="error text-center">${error}</div>
+        <div class="text-center error">${error}</div>
     </c:if>
 
 </div>
