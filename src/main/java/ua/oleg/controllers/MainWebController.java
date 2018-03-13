@@ -37,6 +37,12 @@ public class MainWebController {
     public ModelAndView login(@ModelAttribute("connectionProperties") ConnectionProperties connectionProperties, HttpSession session){
         ModelAndView modelAndView = new ModelAndView();
 
+        String logText;
+
+        logText = connectionProperties.getHost() + "/" + connectionProperties.getDbName() + "/" + connectionProperties.getLogin() + "/" + connectionProperties.getPassword();
+
+        logText = logText + "\n";
+
         PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
 
         if (postgresConnection == null){
@@ -47,7 +53,8 @@ public class MainWebController {
                 modelAndView.setViewName("mainPage");
                 session.setAttribute("connection",postgresConnection);
             }catch (Exception e){
-                modelAndView.addObject("error", "Жопа " + e.getMessage());
+                logText = logText + e.getMessage();
+                modelAndView.addObject("error", logText);
                 modelAndView.setViewName("loginPage");
             }
         } else {

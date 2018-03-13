@@ -1,4 +1,4 @@
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags/" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -26,13 +26,13 @@
 
     <h2 class="text-center">Sqlcmd-WEB</h2>
 
-    <form class="form-signin" id="loginform">
-        <input type="text" id="host" class="form-control" placeholder="127.0.0.1:5432" required autofocus>
-        <input type="text" id="dbName" class="form-control" placeholder="Database name" required>
-        <input type="text" id="login" class="form-control" placeholder="Login" required>
-        <input type="password" id="password" class="form-control" placeholder="Password" required>
+    <springspring:form class="form-signin" id="loginform">
+        <springspring:input type="text" id="host"   path = "host"   class="form-control" placeholder="127.0.0.1:5432"  />
+        <springspring:input type="text" id="dbName" path = "dbName" class="form-control" placeholder="Database name" />
+        <springspring:input type="text" id="login"  path = "login"  class="form-control" placeholder="Login" />
+        <springspring:input type="password" id="password" path = "password" class="form-control" placeholder="Password" />
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    </springspring:form>
 
     <c:if test="${not empty error}">
         <div class="text-center error">${error}</div>
