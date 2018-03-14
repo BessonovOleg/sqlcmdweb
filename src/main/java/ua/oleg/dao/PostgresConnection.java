@@ -35,4 +35,12 @@ public class PostgresConnection {
     public Connection getConnection() {
         return connection;
     }
+
+    public void closeConnection() throws Exception{
+        try {
+            connection.close();
+        }catch (Exception e){
+           throw new Exception(e);
+        }
+    }
 }

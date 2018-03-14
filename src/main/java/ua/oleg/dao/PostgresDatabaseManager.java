@@ -1,39 +1,32 @@
 package ua.oleg.dao;
 
-import java.sql.*;
+import org.springframework.stereotype.Component;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
 public class PostgresDatabaseManager {
-    private String socket;
+
     private String notConnectedText = "Подключение к базе не установлено!";
     private Connection connection = null;
 
-    public PostgresDatabaseManager(String socket) {
-        this.socket = socket;
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    public PostgresDatabaseManager() {
+
     }
 
 
-    public void connect(String dbName, String userName, String password) {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e.getMessage(),e);
-        }
+    public List<String> tables() {
+        List<String> result = new ArrayList<String>();
 
-        try {
-            connection = DriverManager.getConnection("jdbc:postgresql://"+socket+"/" + dbName+"?loggerLevel=OFF", userName, password);
-        } catch (Exception ex) {
-            connection = null;
-            throw new RuntimeException(ex);
-        }
-    }
-
-
-    public String tables() {
         if (isConnectionNull()) {
-            return notConnectedText;
+            return result;
         }
-
-        StringBuilder result = new StringBuilder();
 
         try {
             Statement stmt = connection.createStatement();
@@ -41,18 +34,19 @@ public class PostgresDatabaseManager {
             ResultSet rs = stmt.executeQuery("select table_name as tblName " +
                     " from information_schema.tables " +
                     " where table_schema='public' " +
-                    " and table_type='BASE TABLE'; ");
+                    " and table_type='BASE TABLE'" +
+                    " order by table_name;");
             while (rs.next()) {
-                result.append("\t").append(rs.getString("tblName")).append("\n");
+                result.add(rs.getString("tblName"));
             }
             rs.close();
             stmt.close();
 
         }catch (SQLException ex){
-            result.append(ex.getMessage());
+            throw new RuntimeException(ex);
         }
 
-        return result.toString();
+        return result;
     }
 
 

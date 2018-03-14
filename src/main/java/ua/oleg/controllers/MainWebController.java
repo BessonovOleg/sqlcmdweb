@@ -1,6 +1,5 @@
 package ua.oleg.controllers;
 
-import org.apache.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,7 @@ public class MainWebController {
         PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
 
         if (postgresConnection != null){
-            modelAndView.setViewName("mainPage");
+            modelAndView = new ModelAndView("redirect:./mainpage");
         }else {
             modelAndView.addObject("connectionProperties", new ConnectionProperties());
             modelAndView.setViewName("loginPage");
@@ -30,41 +29,39 @@ public class MainWebController {
         return modelAndView;
     }
 
-//    @RequestMapping(value = "/repfirstmake",method = RequestMethod.POST)
-//    public ModelAndView repfirstMake(@ModelAttribute("reportModel") Report report){
-
-    @RequestMapping(value = "/connect",method = RequestMethod.POST)
-    public ModelAndView login(@ModelAttribute("connectionProperties") ConnectionProperties connectionProperties, HttpSession session){
+    @RequestMapping(value = "/mainpage",method = RequestMethod.GET)
+    public ModelAndView mainpage(HttpSession session){
         ModelAndView modelAndView = new ModelAndView();
-
-        String logText;
-
-        logText = connectionProperties.getHost() + "/" + connectionProperties.getDbName() + "/" + connectionProperties.getLogin() + "/" + connectionProperties.getPassword();
-
-        logText = logText + "\n";
-
         PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
 
-        if (postgresConnection == null){
-            postgresConnection = new PostgresConnection(connectionProperties);
-
-            try {
-                postgresConnection.connect();
-                modelAndView.setViewName("mainPage");
-                session.setAttribute("connection",postgresConnection);
-            }catch (Exception e){
-                logText = logText + e.getMessage();
-                modelAndView.addObject("error", logText);
-                modelAndView.setViewName("loginPage");
-            }
-        } else {
+        if (postgresConnection != null){
             modelAndView.setViewName("mainPage");
+        }else {
+            modelAndView = new ModelAndView("redirect:./login");
         }
 
         return modelAndView;
     }
 
-   //     modelAndView.addObject("reportModel",new Report());
-  //      modelAndView.setViewName("rep_first");
+    @RequestMapping(value = "/connect",method = RequestMethod.POST)
+    public ModelAndView connectPage(@ModelAttribute("connectionProperties") ConnectionProperties connectionProperties, HttpSession session){
+        ModelAndView modelAndView = new ModelAndView();
+        PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
+
+        if (postgresConnection == null){
+            postgresConnection = new PostgresConnection(connectionProperties);
+            try {
+                postgresConnection.connect();
+                modelAndView = new ModelAndView("redirect:./mainpage");
+                session.setAttribute("connection",postgresConnection);
+            }catch (Exception e){
+                modelAndView.addObject("error", e.getMessage());
+                modelAndView.setViewName("loginPage");
+            }
+        } else {
+            modelAndView = new ModelAndView("redirect:./mainpage");
+        }
+        return modelAndView;
+    }
 
 }
