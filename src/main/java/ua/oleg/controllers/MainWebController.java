@@ -23,7 +23,9 @@ public class MainWebController {
         if (postgresConnection != null){
             modelAndView = new ModelAndView("redirect:./mainpage");
         }else {
-            modelAndView.addObject("connectionProperties", new ConnectionProperties());
+            ConnectionProperties connectionProperties = new ConnectionProperties();
+            connectionProperties.setHost("127.0.0.1:5432");
+            modelAndView.addObject("connectionProperties", connectionProperties);
             modelAndView.setViewName("loginPage");
         }
         return modelAndView;

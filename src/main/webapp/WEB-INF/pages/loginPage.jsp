@@ -29,10 +29,10 @@
     <h2 class="text-center">Sqlcmd-WEB</h2>
 
     <spring:form modelAttribute="connectionProperties" class="form-signin" id="loginform">
-        <spring:input type="text" path = "host"   class="form-control" placeholder="127.0.0.1:5432"  />
-        <spring:input type="text" path = "dbName" class="form-control" placeholder="Database name" />
-        <spring:input type="text" path = "login"  class="form-control" placeholder="Login" />
-        <spring:input type="password" path = "password" class="form-control" placeholder="Password" />
+        <spring:input type="text" path = "host"   title = "Host" class="form-control" placeholder="127.0.0.1:5432"  />
+        <spring:input type="text" path = "dbName" title = "Database name" class="form-control" placeholder="Database name" />
+        <spring:input type="text" path = "login"  title = "Login" class="form-control" placeholder="Login" />
+        <spring:input type="password" path = "password" title= "Password" class="form-control" placeholder="Password" />
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </spring:form>
 

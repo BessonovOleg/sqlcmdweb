@@ -19,12 +19,44 @@
 
 </head>
 <body>
-    <h1>Main page</h1>
+<div class="container">
+    <div class = "row">
+        <h2 class="text-center">Sqlcmd-WEB</h2>
 
-    <div class="container">
-        <button class="btn btn-sm" id="buttonLoad">Загрузить</button>
-    </div>
+        <div class="col-xs-3">
+            <table class="table table-condensed " id="tblTables">
+                <thead>
+                <tr>
+                    <th>Tables</th>
+                    <th>
+                        <div class="btn-group pull-right" role="group">
+                            <button type="button" id="btnAddTable" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button>
 
+                            <button type="button" id="btnRemoveTable" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-xs-9">
+            <table class="table table-condensed " id="tblContents">
+                <thead>
+                <tr>
+                    <th></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div >
+</div>
 
 
 <springmain:url value="/resources/webjars/jquery/3.2.1/jquery-3.2.1.min.js" var="minjs"/>
