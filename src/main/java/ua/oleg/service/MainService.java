@@ -34,4 +34,8 @@ public class MainService {
         return result;
     }
 
+    public void deleteTable(String tableName){
+        postgresDatabaseManager.deleteTable(tableName);
+    }
+
 }

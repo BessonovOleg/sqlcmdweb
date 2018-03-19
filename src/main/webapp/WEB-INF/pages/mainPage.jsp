@@ -19,6 +19,23 @@
 
 </head>
 <body>
+
+<!-- delete table confirm -->
+<div class="modal" id="confirmModal" style="display: none; z-index: 1050;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="confirmMessage">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="confirmOk">Ok</button>
+                <button type="button" class="btn btn-default" id="confirmCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <div class="container">
     <div class = "row">
         <h2 class="text-center">Sqlcmd-WEB</h2>

@@ -70,23 +70,19 @@ public class PostgresDatabaseManager {
     }
 
 
-    public String drop(String tableName) {
+    public void deleteTable(String tableName) {
         if (isConnectionNull()) {
-            return notConnectedText;
+           throw new RuntimeException("Cannot connect to database");
         }
-
-        StringBuilder result = new StringBuilder();
 
         try{
             String sql = "drop table " + tableName;
             Statement stm = connection.createStatement();
             stm.executeUpdate(sql);
-            result.append("Команда выполнена. Таблица: ").append(tableName).append(" удалена.");
             stm.close();
         }catch (Exception ex){
-            result.append("Ошибка выполнения!");
+            throw new RuntimeException(ex);
         }
-        return result.toString();
     }
 
 
