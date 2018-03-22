@@ -1,6 +1,7 @@
 package ua.oleg.dao;
 
 import org.springframework.stereotype.Component;
+import ua.oleg.model.DataTable;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,17 +10,14 @@ import java.util.List;
 @Component
 public class PostgresDatabaseManager {
 
-    private String notConnectedText = "Подключение к базе не установлено!";
+    private String notConnectedText = "Cannot connect to database";
     private Connection connection = null;
 
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
 
-    public PostgresDatabaseManager() {
-
-    }
-
+    public PostgresDatabaseManager() {}
 
     public List<String> tables() {
         List<String> result = new ArrayList<String>();
@@ -50,6 +48,47 @@ public class PostgresDatabaseManager {
     }
 
 
+    public DataTable getDataFromTable(String tableName) {
+        if (isConnectionNull()) {
+            throw new RuntimeException(notConnectedText);
+        }
+
+        DataTable result = new DataTable();
+        ResultSet rs;
+
+        try {
+            Statement stmt = connection.createStatement();
+            rs = stmt.executeQuery("select * from " + tableName);
+
+            ResultSetMetaData md = rs.getMetaData();
+            int countColumns = md.getColumnCount();
+
+            for(int i = 1;i <= countColumns;i++){
+                result.getColumnCaptions().add(md.getColumnName(i));
+            }
+
+            while (rs.next()){
+                List<String> rowData = new ArrayList<String>();
+                for (int i = 1; i <= countColumns; i++) {
+                    if (rs.getObject(i) != null) {
+                        rowData.add(rs.getString(i));
+                    }else{
+                        rowData.add("");
+                    }
+                }
+                result.getData().add(rowData);
+            }
+
+        }catch (SQLException ex){
+            throw new RuntimeException(ex);
+        }
+
+        return result;
+    }
+
+
+
+
     public String clear(String tableName) {
         if (isConnectionNull()) {
             return notConnectedText;
@@ -69,7 +108,6 @@ public class PostgresDatabaseManager {
         return result.toString();
     }
 
-
     public void deleteTable(String tableName) {
         if (isConnectionNull()) {
            throw new RuntimeException("Cannot connect to database");
@@ -84,7 +122,6 @@ public class PostgresDatabaseManager {
             throw new RuntimeException(ex);
         }
     }
-
 
     public String create(String command) {
         if (isConnectionNull()) {
@@ -129,21 +166,6 @@ public class PostgresDatabaseManager {
     }
 
 
-    public ResultSet find(String tableName) {
-        if (isConnectionNull()) {
-            throw new RuntimeException(notConnectedText);
-        }
-
-        ResultSet rs;
-
-        try {
-            Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery("select * from " + tableName);
-        }catch (SQLException ex){
-            throw new RuntimeException(ex);
-        }
-        return rs;
-    }
 
 
     public String insert(String command) {

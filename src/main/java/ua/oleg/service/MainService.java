@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.oleg.dao.PostgresConnection;
 import ua.oleg.dao.PostgresDatabaseManager;
+import ua.oleg.model.DataTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,4 +39,15 @@ public class MainService {
         postgresDatabaseManager.deleteTable(tableName);
     }
 
+    public DataTable getTableData(String tableName){
+        DataTable result = new DataTable();
+
+        try{
+            result = postgresDatabaseManager.getDataFromTable(tableName);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
 }

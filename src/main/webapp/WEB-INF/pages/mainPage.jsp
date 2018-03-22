@@ -33,6 +33,29 @@
         </div>
     </div>
 </div>
+<!-- ----------------- -->
+
+
+<!-- table for change value -->
+<div class="modal" id="dialogUpdate" style="display: none; z-index: 1049;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="dialogUpdateBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="dialogUpdateBtnOk">Ok</button>
+                <button type="button" class="btn btn-default" id="dialogUpdateBtnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- -->
+
+
+<!-- table for create table -->
+<!-- -->
+
 
 
 
@@ -43,33 +66,34 @@
         <div class="col-xs-3">
             <table class="table table-condensed " id="tblTables">
                 <thead>
-                <tr>
-                    <th>Tables</th>
-                    <th>
-                        <div class="btn-group pull-right" role="group">
-                            <button type="button" id="btnAddTable" class="btn btn-success">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                            </button>
+                    <tr>
+                        <th>Tables</th>
+                        <th>
+                            <div class="btn-group pull-right" role="group">
+                                <button type="button" id="btnAddTable" class="btn btn-success">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button>
 
-                            <button type="button" id="btnRemoveTable" class="btn btn-danger">
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                            </button>
-                        </div>
-                    </th>
-                </tr>
+                                <button type="button" id="btnRemoveTable" class="btn btn-danger">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </th>
+                    </tr>
                 </thead>
+
                 <tbody>
                 </tbody>
             </table>
         </div>
 
         <div class="col-xs-9">
-            <table class="table table-condensed " id="tblContents">
+            <table class="table table-condensed table-bordered" id="tblContents">
                 <thead>
-                <tr>
-                    <th></th>
-                </tr>
+                    <tr></tr>
                 </thead>
+
+                <tbody></tbody>
             </table>
         </div>
     </div >

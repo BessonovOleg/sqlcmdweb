@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class DataTable {
     private List<String> columnCaptions;
-    private List<Map<String,String>> data;
+    private List<List<String>> data;
 
     public DataTable() {
         columnCaptions = new ArrayList<String>();
-        data = new ArrayList<Map<String, String>>();
+        data = new ArrayList<List<String>>();
     }
 
     public List<String> getColumnCaptions() {
@@ -22,11 +22,11 @@ public class DataTable {
         this.columnCaptions = columnCaptions;
     }
 
-    public List<Map<String, String>> getData() {
+    public List<List<String>> getData() {
         return data;
     }
 
-    public void setData(List<Map<String, String>> data) {
+    public void setData(List<List<String>> data) {
         this.data = data;
     }
 }

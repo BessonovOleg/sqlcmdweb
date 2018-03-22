@@ -23,27 +23,24 @@ public class MainRestController {
     @Autowired
     private MainService mainService;
 
-    @RequestMapping(value = "/datatable", method = RequestMethod.GET)
-    public DataTable getDataTable(HttpSession session){
+    @RequestMapping(value = "/tabledata", method = RequestMethod.GET)
+    public DataTable getTableData(HttpSession session,HttpServletRequest request){
+
         DataTable result = new DataTable();
+        PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
 
-        result.getColumnCaptions().add("Table1");
-        result.getColumnCaptions().add("Table2");
-        result.getColumnCaptions().add("Table3");
+        if(postgresConnection != null) {
+            String tableName = request.getParameter("tblname").trim();
 
-        Map<String,String> map = new HashMap<String, String>();
-        map.put("MyKey","MyValue");
-        result.getData().add(map);
-
-        Map<String,String> map2 = new HashMap<String, String>();
-        map2.put("MyKey2","MyValue2");
-        result.getData().add(map2);
-
-        Map<String,String> map3 = new HashMap<String, String>();
-        map3.put("MyKey3","MyValue3");
-        result.getData().add(map3);
-
-
+            if (tableName != null && !"".equals(tableName)) {
+                try {
+                    mainService.setConnection(postgresConnection);
+                    result = mainService.getTableData(tableName);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         return result;
     }
 

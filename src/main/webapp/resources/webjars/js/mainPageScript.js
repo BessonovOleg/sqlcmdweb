@@ -1,20 +1,38 @@
 $(window).ready(function(){
 
+
     $('#tblTables tbody').on('click','tr', function() {
         //Mark selected row in table
         $('#tblTables tr').removeClass('marked');
         $(this).addClass('marked');
 
         //Load data
-
+        var tableName = $("#tblTables .marked");
+        if (tableName.length > 0){
+            $.ajax({
+                type: 'GET',
+                url: '../rest/tabledata',
+                data:{tblname:tableName.text()},
+                dataType: "json",
+                success: fillTableContents
+            });
+        }
     });
+
+
+    $('#tblContents tbody').on('click','tr', function() {
+        //Mark selected row in table
+        $('#tblContents tr').removeClass('marked');
+        $(this).addClass('marked');
+    });
+
 
     //Listener button [delete table]
     $('#btnRemoveTable').on('click', function(e){
         var tableName = $("#tblTables .marked");
         if (tableName.length > 0){
-            var YOUR_MESSAGE_STRING_CONST = "Are you sure you want to drop '" + tableName.text() + "' ?";
-            confirmDialog(YOUR_MESSAGE_STRING_CONST,function () {
+            var MESSAGE_STRING_CONST = "Are you sure you want to drop '" + tableName.text() + "' ?";
+            confirmDialog(MESSAGE_STRING_CONST,function () {
                 $.ajax({
                    type: "POST",
                    url: "../rest/deletetable",
@@ -29,16 +47,21 @@ $(window).ready(function(){
         }
     });
 
+    $('#btnFill').on('click',function () {
+        $.ajax({
+            type: 'GET',
+            url: '../rest/datatable',
+            data:{tblname:"1"},
+            dataType: "json",
+            success: fillTableContents
+        });
+    });
 
     //Load list tables
     loadTableNames();
 
     }
 );
-
-
-
-
 
 function loadTableNames(){
     $.ajax({
@@ -54,7 +77,6 @@ function loadTableNames(){
     });
 }
 
-
 function confirmDialog(message, onConfirm){
     var fClose = function(){
         modal.modal("hide");
@@ -66,4 +88,26 @@ function confirmDialog(message, onConfirm){
     $("#confirmOk").one('click', onConfirm);
     $("#confirmOk").one('click', fClose);
     $("#confirmCancel").one("click", fClose);
+}
+
+function fillTableContents(dataTable){
+
+    $("#tblContents thead tr > th").remove();
+    $("#tblContents tbody > tr").remove();
+
+    var headers = dataTable.columnCaptions;
+    var tableContents = dataTable.data;
+    var rowID = 1;
+
+    headers.forEach(function(headCaption){
+        $("#tblContents thead tr").append("<th>" + headCaption + "</th>");
+    });
+
+    tableContents.forEach(function (tableData) {
+        $("#tblContents tbody").append("<tr id='rowID"+rowID+"'></tr>>");
+            tableData.forEach(function (value) {
+                $("#rowID"+ rowID).append("<td>"+value+"</td>");
+            });
+        rowID++;
+    });
 }
