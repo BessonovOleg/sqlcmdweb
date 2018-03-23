@@ -32,6 +32,11 @@ $(window).ready(function(){
     });
 
 
+    $('#dialogUpdate').on('show.bs.modal', function () {
+        $('.modal .modal-body').css('overflow-y', 'auto');
+        $('.modal .modal-body').css('max-height', $(window).height() * 0.7);
+    });
+
 
 
     //Listener button [delete table]
@@ -103,7 +108,7 @@ function fillTableContents(dataTable){
     $("#tblContents tbody > tr").remove();
 
     $("#tblUpdateData thead tr > th").remove();
-    $("#tblUpdateData tbody > tr").remove();
+    $("#tblUpdateData tbody tr > td").remove();
 
     var headers = dataTable.columnCaptions;
     var tableContents = dataTable.data;
@@ -111,9 +116,10 @@ function fillTableContents(dataTable){
 
     headers.forEach(function(headCaption){
         $("#tblContents thead tr").append("<th>" + headCaption + "</th>");
-        $("#tblUpdateData thead tr").append("<th>" + headCaption + "</th>");
-        $("#tblUpdateData tbody tr").append('<td><input type="text" id="'+headCaption+'></input></td>');
-
+        if(headCaption.toString() != "ID"){
+            $("#tblUpdateData thead tr").append("<th>" + headCaption + "</th>");
+            $("#tblUpdateData tbody tr").append('<td><input type="text" id="' + headCaption + '"></input></td>');
+        }
     });
 
     tableContents.forEach(function (tableData) {
