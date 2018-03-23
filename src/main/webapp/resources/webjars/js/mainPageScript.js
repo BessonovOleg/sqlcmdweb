@@ -1,6 +1,5 @@
 $(window).ready(function(){
 
-
     $('#tblTables tbody').on('click','tr', function() {
         //Mark selected row in table
         $('#tblTables tr').removeClass('marked');
@@ -25,6 +24,14 @@ $(window).ready(function(){
         $('#tblContents tr').removeClass('marked');
         $(this).addClass('marked');
     });
+
+    //test
+    $('#btnTest').on('click',function(){
+        var m = $("#dialogUpdate");
+        m.modal("show");
+    });
+
+
 
 
     //Listener button [delete table]
@@ -95,12 +102,18 @@ function fillTableContents(dataTable){
     $("#tblContents thead tr > th").remove();
     $("#tblContents tbody > tr").remove();
 
+    $("#tblUpdateData thead tr > th").remove();
+    $("#tblUpdateData tbody > tr").remove();
+
     var headers = dataTable.columnCaptions;
     var tableContents = dataTable.data;
     var rowID = 1;
 
     headers.forEach(function(headCaption){
         $("#tblContents thead tr").append("<th>" + headCaption + "</th>");
+        $("#tblUpdateData thead tr").append("<th>" + headCaption + "</th>");
+        $("#tblUpdateData tbody tr").append('<td><input type="text" id="'+headCaption+'></input></td>');
+
     });
 
     tableContents.forEach(function (tableData) {

@@ -35,13 +35,21 @@
 </div>
 <!-- ----------------- -->
 
-
 <!-- table for change value -->
 <div class="modal" id="dialogUpdate" style="display: none; z-index: 1049;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body" id="dialogUpdateBody">
+                <table class="table table-condensed table-bordered" id="tblUpdateData">
+                    <thead>
+                    <tr></tr>
+                    </thead>
 
+                    <tbody>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="dialogUpdateBtnOk">Ok</button>
@@ -97,6 +105,9 @@
             </table>
         </div>
     </div >
+
+    <button type="button" id="btnTest" class="btn btn-default">test</button>
+
 </div>
 
 
