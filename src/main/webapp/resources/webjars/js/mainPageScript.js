@@ -122,11 +122,30 @@ function fillTableContents(dataTable){
         }
     });
 
+    //button control rows
+    if(headers.length > 0){
+        var strControl = "<th><div class='btn-group pull-right' role='group'>"+
+        "<button type='button' id='btnAddTable' class='btn btn-success'>"+
+        "<span class='glyphicon glyphicon-plus' aria-hidden='true'></span>"+
+        "</button>"+
+        "<button type='button' id='btnRemoveTable' class='btn btn-danger'>"+
+        "<span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"+
+        "</button>"+
+        "</div>"+
+        "</th>";
+
+
+        $("#tblContents thead tr").append(strControl);
+
+    }
+
+
     tableContents.forEach(function (tableData) {
         $("#tblContents tbody").append("<tr id='rowID"+rowID+"'></tr>>");
             tableData.forEach(function (value) {
-                $("#rowID"+ rowID).append("<td>"+value+"</td>");
+                $("#rowID"+ rowID).append("<td>"+value+"</td></td>");
             });
         rowID++;
     });
+
 }

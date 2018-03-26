@@ -46,11 +46,12 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                        </tr>
                     </tbody>
                 </table>
             </div>
+
+
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="dialogUpdateBtnOk">Ok</button>
                 <button type="button" class="btn btn-default" id="dialogUpdateBtnCancel">Cancel</button>
