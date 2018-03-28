@@ -18,17 +18,20 @@ $(window).ready(function(){
         }
     });
 
-
     $('#tblContents tbody').on('click','tr', function() {
         //Mark selected row in table
         $('#tblContents tr').removeClass('marked');
         $(this).addClass('marked');
     });
 
-    //test
-    $('#btnTest').on('click',function(){
-        var m = $("#dialogUpdate");
-        m.modal("show");
+
+    //Button create new table
+    $('#btnAddTable').on('click',createNewTable);
+
+
+    //Button add new column
+    $('#btnAddNewColumn').on('click',function () {
+        $('#tblAddTable tbody').append("<tr><td><input type='text' placeholder='column name'></td></tr>>");
     });
 
 
@@ -38,6 +41,11 @@ $(window).ready(function(){
     });
 
 
+    //test
+    $('#btnTest').on('click',function(){
+        var m = $("#dialogUpdate");
+        m.modal("show");
+    });
 
     //Listener button [delete table]
     $('#btnRemoveTable').on('click', function(e){
@@ -59,6 +67,10 @@ $(window).ready(function(){
         }
     });
 
+
+
+
+
     $('#btnFill').on('click',function () {
         $.ajax({
             type: 'GET',
@@ -76,12 +88,16 @@ $(window).ready(function(){
 );
 
 function loadTableNames(){
+
+    $("#tblContents thead tr > th").remove();
+    $("#tblContents tbody > tr").remove();
+    $("#tblTables tbody > tr").remove();
+
     $.ajax({
         type:'GET',
         url:'../rest/tables',
         dataType:"json",
         success: function (data) {
-            $("#tblTables tbody > tr").remove();
             data.forEach(function(d) {
                 $("#tblTables tbody").append("<tr><td colspan='2'>"+d+"</td></tr>");
             });
@@ -101,6 +117,67 @@ function confirmDialog(message, onConfirm){
     $("#confirmOk").one('click', fClose);
     $("#confirmCancel").one("click", fClose);
 }
+
+
+
+function createNewTable(){
+    $("#tblAddTable tbody tr > td").remove();
+    $('#edTblName').val("");
+
+    var dlg = $('#dialogCreateTable');
+        dlg.modal('show');
+
+    var fClose = function(){
+        dlg.modal("hide");
+    };
+
+
+    //loadTableNames()
+
+    /*
+                                         1 проверяем название таблицы - если пустое - ничего не делаем
+        3 формируем блок data для json
+        4 отправляем данные на сервер
+        5 по окончании обработки заново заполним список таблиц
+    */
+
+    var fDone = function(){
+        var arrayColumnNames = [];
+        var edTblName = $('#edTblName');
+        if(!edTblName.val() || edTblName.val() == ''){
+            alert('Table name cannot be empty!');
+            return false;
+        }
+
+        var columnNameItems = $("#tblAddTable :input");
+            columnNameItems.each(function () {
+                arrayColumnNames.push($(this).val());
+            });
+
+        //For unique names
+        arrayColumnNames = Array.from(new Set(arrayColumnNames));
+
+        arrayColumnNames = JSON.stringify(arrayColumnNames);
+
+        $.ajax({
+            type: "POST",
+            url: "../rest/createtable",
+            data: {tblname: edTblName.val(),tblcolumns :arrayColumnNames }
+        }).done(function( msg ) {
+            alert(msg);
+            loadTableNames();
+        });
+    };
+
+    $("#dialogAddBtnOk").unbind('click');
+    $("#dialogAddBtnOk").one('click', fDone);
+    $("#dialogAddBtnOk").one('click', fClose);
+    $("#dialogAddBtnCancel").one("click", fClose);
+
+}
+
+
+
 
 function fillTableContents(dataTable){
 
@@ -125,20 +202,19 @@ function fillTableContents(dataTable){
     //button control rows
     if(headers.length > 0){
         var strControl = "<th><div class='btn-group pull-right' role='group'>"+
-        "<button type='button' id='btnAddTable' class='btn btn-success'>"+
+        "<button type='button' id='btnAddRow' class='btn btn-success'>"+
         "<span class='glyphicon glyphicon-plus' aria-hidden='true'></span>"+
         "</button>"+
-        "<button type='button' id='btnRemoveTable' class='btn btn-danger'>"+
+        "<button type='button' id='btnEditRow' class='btn btn-warning'>"+
+        "<span class='glyphicon glyphicon glyphicon-pencil' aria-hidden='true'></span>"+
+        "</button>"+
+        "<button type='button' id='btnRemoveRow' class='btn btn-danger'>"+
         "<span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"+
         "</button>"+
         "</div>"+
         "</th>";
-
-
         $("#tblContents thead tr").append(strControl);
-
     }
-
 
     tableContents.forEach(function (tableData) {
         $("#tblContents tbody").append("<tr id='rowID"+rowID+"'></tr>>");
@@ -147,5 +223,6 @@ function fillTableContents(dataTable){
             });
         rowID++;
     });
-
 }
+
+

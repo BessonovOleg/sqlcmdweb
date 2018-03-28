@@ -88,7 +88,6 @@ public class PostgresDatabaseManager {
 
 
 
-
     public String clear(String tableName) {
         if (isConnectionNull()) {
             return notConnectedText;
@@ -123,46 +122,35 @@ public class PostgresDatabaseManager {
         }
     }
 
-    public String create(String command) {
+    public void createTable(String tableName,String[] tableColumns) {
         if (isConnectionNull()) {
-            return notConnectedText;
+            throw new RuntimeException("Cannot connect to database");
         }
 
-        StringBuilder result = new StringBuilder();
-        String[] arrayCommand = command.split("[|]");
-        String tableName;
+        String result = "";
         StringBuilder sql = new StringBuilder();
 
         try{
-            tableName = arrayCommand[0];
             sql.append("CREATE TABLE IF NOT EXISTS ");
             sql.append(tableName);
-            sql.append("(");
+            sql.append("(ID SERIAL");
 
-            for (int i = 1; i < arrayCommand.length; i++) {
-                if(i > 1){
-                    sql.append(",");
-                }
-                sql.append(arrayCommand[i]);
-                sql.append(" varchar(225)");
+            for (int i = 1; i < tableColumns.length; i++) {
+                sql.append(",").append(tableColumns[i]).append(" varchar(225)");
             }
 
             sql.append(")");
-
         }catch (Exception ex){
-            return "Ошибка формата команды";
+            throw new RuntimeException(ex);
         }
 
         try{
             Statement stm = connection.createStatement();
             stm.executeUpdate(sql.toString());
-            result.append("команда выполнена успешно");
             stm.close();
         }catch (Exception ex){
-            result.append("Ошибка выполнения!");
+            throw new RuntimeException(ex);
         }
-
-        return result.toString();
     }
 
 

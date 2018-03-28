@@ -39,6 +39,12 @@ public class MainService {
         postgresDatabaseManager.deleteTable(tableName);
     }
 
+
+    public void createTable(String tableName,String[] columns){
+        postgresDatabaseManager.createTable(tableName,columns);
+    }
+
+
     public DataTable getTableData(String tableName){
         DataTable result = new DataTable();
 

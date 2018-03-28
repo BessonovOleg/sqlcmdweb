@@ -82,4 +82,40 @@ public class MainRestController {
         return result;
     }
 
+
+
+    @RequestMapping(value = "/createtable",method = RequestMethod.POST)
+    public String createTable(HttpSession session, HttpServletRequest request){
+        String result = "";
+        PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
+
+        if(postgresConnection != null) {
+            String tableName = request.getParameter("tblname").trim();
+            String[] prmColumns = request.getParameterValues("tblcolumns");
+            String[] columns = {};
+
+             try {
+                String[] tmpArray=request.getParameterValues("tblcolumns");
+                columns = tmpArray[0].split(",");
+
+                 result = request.getParameterValues("tblcolumns")[0];
+
+             }catch (Exception e){
+                //
+             }
+                try {
+                    mainService.setConnection(postgresConnection);
+                    mainService.createTable(tableName,columns);
+                    result = "Table '"+tableName+"' was created in database!";
+                }catch (Exception e){
+                   //result = e.getMessage();
+                }
+        }else {
+            //result = "Cannot connect ot database!";
+        }
+         return result;
+    }
+
+
+
 }
