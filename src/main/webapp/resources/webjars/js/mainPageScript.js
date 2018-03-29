@@ -157,12 +157,17 @@ function createNewTable(){
         //For unique names
         arrayColumnNames = Array.from(new Set(arrayColumnNames));
 
-        arrayColumnNames = JSON.stringify(arrayColumnNames);
+        var tblinfo = {
+            tblname:edTblName.val(),
+            tblcolumns:arrayColumnNames
+        };
+
+        //{tblname: edTblName.val(),tblcolumns :arrayColumnNames }
 
         $.ajax({
             type: "POST",
             url: "../rest/createtable",
-            data: {tblname: edTblName.val(),tblcolumns :arrayColumnNames }
+            data:JSON.stringify(tblinfo)
         }).done(function( msg ) {
             alert(msg);
             loadTableNames();

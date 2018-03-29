@@ -2,6 +2,7 @@ package ua.oleg.dao;
 
 import org.springframework.stereotype.Component;
 import ua.oleg.model.DataTable;
+import ua.oleg.utils.ColumnProperties;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -122,21 +123,24 @@ public class PostgresDatabaseManager {
         }
     }
 
-    public void createTable(String tableName,String[] tableColumns) {
+    public void createTable(ColumnProperties columnProperties) {
         if (isConnectionNull()) {
             throw new RuntimeException("Cannot connect to database");
         }
 
         String result = "";
         StringBuilder sql = new StringBuilder();
+        String[] tableColumns = columnProperties.getTblcolumns();
 
         try{
             sql.append("CREATE TABLE IF NOT EXISTS ");
-            sql.append(tableName);
+            sql.append(columnProperties.getTblname());
             sql.append("(ID SERIAL");
 
-            for (int i = 1; i < tableColumns.length; i++) {
-                sql.append(",").append(tableColumns[i]).append(" varchar(225)");
+            if (tableColumns != null) {
+                for (int i = 1; i < tableColumns.length; i++) {
+                    sql.append(",").append(tableColumns[i]).append(" varchar(225)");
+                }
             }
 
             sql.append(")");

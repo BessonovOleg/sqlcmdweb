@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ua.oleg.dao.PostgresConnection;
 import ua.oleg.dao.PostgresDatabaseManager;
 import ua.oleg.model.DataTable;
+import ua.oleg.utils.ColumnProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class MainService {
     }
 
 
-    public void createTable(String tableName,String[] columns){
-        postgresDatabaseManager.createTable(tableName,columns);
+    public void createTable(ColumnProperties columnProperties){
+        postgresDatabaseManager.createTable(columnProperties);
     }
 
 

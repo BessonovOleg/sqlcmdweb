@@ -1,16 +1,26 @@
 package ua.oleg.controllers;
 
+
+import com.google.gson.Gson;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ua.oleg.dao.PostgresConnection;
-import ua.oleg.dao.PostgresDatabaseManager;
 import ua.oleg.model.DataTable;
 import ua.oleg.service.MainService;
+import ua.oleg.utils.ColumnProperties;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,28 +100,27 @@ public class MainRestController {
         PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
 
         if(postgresConnection != null) {
-            String tableName = request.getParameter("tblname").trim();
-            String[] prmColumns = request.getParameterValues("tblcolumns");
-            String[] columns = {};
+            ColumnProperties columnProperties = null;
 
-             try {
-                String[] tmpArray=request.getParameterValues("tblcolumns");
-                columns = tmpArray[0].split(",");
+            try {
+                BufferedReader reader = request.getReader();
+                Gson gson = new Gson();
+                columnProperties = gson.fromJson(reader, ColumnProperties.class);
+            }catch (Exception e){
+                result = e.getMessage();
+            }
 
-                 result = request.getParameterValues("tblcolumns")[0];
-
-             }catch (Exception e){
-                //
-             }
+            if(columnProperties != null) {
                 try {
                     mainService.setConnection(postgresConnection);
-                    mainService.createTable(tableName,columns);
-                    result = "Table '"+tableName+"' was created in database!";
-                }catch (Exception e){
-                   //result = e.getMessage();
+                    mainService.createTable(columnProperties);
+                    result = "Table '" + columnProperties.getTblname() + "' was created in database!";
+                } catch (Exception e) {
+                    result = e.getMessage();
                 }
+            }
         }else {
-            //result = "Cannot connect ot database!";
+            result = "Cannot connect ot database!";
         }
          return result;
     }
