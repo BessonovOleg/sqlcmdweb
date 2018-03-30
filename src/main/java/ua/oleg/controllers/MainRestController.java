@@ -2,9 +2,6 @@ package ua.oleg.controllers;
 
 
 import com.google.gson.Gson;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,13 +15,9 @@ import ua.oleg.utils.ColumnProperties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 
 @RestController
@@ -124,7 +117,4 @@ public class MainRestController {
         }
          return result;
     }
-
-
-
 }

@@ -24,7 +24,6 @@ $(window).ready(function(){
         $(this).addClass('marked');
     });
 
-
     //Button create new table
     $('#btnAddTable').on('click',createNewTable);
 
@@ -47,6 +46,7 @@ $(window).ready(function(){
         m.modal("show");
     });
 
+
     //Listener button [delete table]
     $('#btnRemoveTable').on('click', function(e){
         var tableName = $("#tblTables .marked");
@@ -66,24 +66,8 @@ $(window).ready(function(){
             alert("Please, select table from list");
         }
     });
-
-
-
-
-
-    $('#btnFill').on('click',function () {
-        $.ajax({
-            type: 'GET',
-            url: '../rest/datatable',
-            data:{tblname:"1"},
-            dataType: "json",
-            success: fillTableContents
-        });
-    });
-
     //Load list tables
     loadTableNames();
-
     }
 );
 
@@ -131,16 +115,6 @@ function createNewTable(){
         dlg.modal("hide");
     };
 
-
-    //loadTableNames()
-
-    /*
-                                         1 проверяем название таблицы - если пустое - ничего не делаем
-        3 формируем блок data для json
-        4 отправляем данные на сервер
-        5 по окончании обработки заново заполним список таблиц
-    */
-
     var fDone = function(){
         var arrayColumnNames = [];
         var edTblName = $('#edTblName');
@@ -154,6 +128,7 @@ function createNewTable(){
                 arrayColumnNames.push($(this).val());
             });
 
+
         //For unique names
         arrayColumnNames = Array.from(new Set(arrayColumnNames));
 
@@ -161,8 +136,6 @@ function createNewTable(){
             tblname:edTblName.val(),
             tblcolumns:arrayColumnNames
         };
-
-        //{tblname: edTblName.val(),tblcolumns :arrayColumnNames }
 
         $.ajax({
             type: "POST",
@@ -178,7 +151,6 @@ function createNewTable(){
     $("#dialogAddBtnOk").one('click', fDone);
     $("#dialogAddBtnOk").one('click', fClose);
     $("#dialogAddBtnCancel").one("click", fClose);
-
 }
 
 

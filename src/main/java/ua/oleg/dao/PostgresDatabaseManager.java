@@ -138,7 +138,7 @@ public class PostgresDatabaseManager {
             sql.append("(ID SERIAL");
 
             if (tableColumns != null) {
-                for (int i = 1; i < tableColumns.length; i++) {
+                for (int i = 0; i < tableColumns.length; i++) {
                     sql.append(",").append(tableColumns[i]).append(" varchar(225)");
                 }
             }

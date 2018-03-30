@@ -16,7 +16,6 @@
 
     <springmain:url value="/resources/webjars/css/mainpage.css" var="mpCs"/>
     <link href="${mpCs}" rel="stylesheet">
-
 </head>
 <body>
 
@@ -49,9 +48,6 @@
                     </tbody>
                 </table>
             </div>
-
-
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="dialogUpdateBtnOk">Ok</button>
                 <button type="button" class="btn btn-default" id="dialogUpdateBtnCancel">Cancel</button>
@@ -69,13 +65,10 @@
 <div class="modal" id="dialogCreateTable" style="display: none; z-index: 1048;">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title">Create new table</h4>
             </div>
-
-
             <div class="modal-body" id="dialoAddTable">
                         <input type="text" id="edTblName" placeholder="Input table name">
                         <br>
@@ -85,7 +78,6 @@
                         </table>
                         <tr><button class="btn btn-success" id="btnAddNewColumn">Add column</button> </tr>
             </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="dialogAddBtnOk">Ok</button>
                 <button type="button" class="btn btn-default" id="dialogAddBtnCancel">Cancel</button>
@@ -93,10 +85,7 @@
         </div>
     </div>
 </div>
-
-
 <!-- -->
-
 
 
 
