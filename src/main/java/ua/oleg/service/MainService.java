@@ -7,6 +7,7 @@ import ua.oleg.dao.PostgresConnection;
 import ua.oleg.dao.PostgresDatabaseManager;
 import ua.oleg.model.DataTable;
 import ua.oleg.utils.ColumnProperties;
+import ua.oleg.utils.RowContentProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +27,11 @@ public class MainService {
 
     public List<String> getTables(){
         List<String> result = new ArrayList<String>();
-
         try {
             result = postgresDatabaseManager.tables();
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-
         return result;
     }
 
@@ -40,11 +39,9 @@ public class MainService {
         postgresDatabaseManager.deleteTable(tableName);
     }
 
-
     public void createTable(ColumnProperties columnProperties){
         postgresDatabaseManager.createTable(columnProperties);
     }
-
 
     public DataTable getTableData(String tableName){
         DataTable result = new DataTable();
@@ -56,5 +53,21 @@ public class MainService {
         }
 
         return result;
+    }
+
+    public void deleteRowByID(String tblName,int rowID){
+        try {
+            postgresDatabaseManager.deleteRowByID(tblName,rowID);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateTableContents(RowContentProperties rowContentProperties){
+        try {
+            postgresDatabaseManager.updateableContents(rowContentProperties);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }

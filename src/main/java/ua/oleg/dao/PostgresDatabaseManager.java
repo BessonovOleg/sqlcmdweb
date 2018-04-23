@@ -3,6 +3,7 @@ package ua.oleg.dao;
 import org.springframework.stereotype.Component;
 import ua.oleg.model.DataTable;
 import ua.oleg.utils.ColumnProperties;
+import ua.oleg.utils.RowContentProperties;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -123,6 +124,33 @@ public class PostgresDatabaseManager {
         }
     }
 
+    public void updateableContents(RowContentProperties rowContentProperties){
+
+    }
+
+    public void deleteRowByID(String tableName,int rowID){
+        if (isConnectionNull()) {
+            throw new RuntimeException("Cannot connect to database");
+        }
+
+        if(tableName == null){
+            return;
+        }
+        String sql = "DELETE FROM " + tableName + " WHERE ID = " + rowID;
+        executeSql(sql);
+    }
+
+
+    private void executeSql(String sql){
+        try{
+            Statement stm = connection.createStatement();
+            stm.executeUpdate(sql);
+            stm.close();
+        }catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
     public void createTable(ColumnProperties columnProperties) {
         if (isConnectionNull()) {
             throw new RuntimeException("Cannot connect to database");
@@ -148,13 +176,7 @@ public class PostgresDatabaseManager {
             throw new RuntimeException(ex);
         }
 
-        try{
-            Statement stm = connection.createStatement();
-            stm.executeUpdate(sql.toString());
-            stm.close();
-        }catch (Exception ex){
-            throw new RuntimeException(ex);
-        }
+        executeSql(sql.toString());
     }
 
 
@@ -344,7 +366,8 @@ public class PostgresDatabaseManager {
         return rs;
     }
 
-    private boolean isConnectionNull(){
+
+    public boolean isConnectionNull(){
         return (connection == null);
     }
 

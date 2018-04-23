@@ -10,6 +10,7 @@ import ua.oleg.dao.PostgresConnection;
 import ua.oleg.model.DataTable;
 import ua.oleg.service.MainService;
 import ua.oleg.utils.ColumnProperties;
+import ua.oleg.utils.RowContentProperties;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +85,64 @@ public class MainRestController {
         }
         return result;
     }
+
+    @RequestMapping(value = "/deleterow",method = RequestMethod.POST)
+    public String deleteRow(HttpSession session, HttpServletRequest request){
+        String result = "";
+        PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
+
+        if(postgresConnection != null) {
+            String tableName = request.getParameter("tblname").trim();
+            int rowID = Integer.valueOf(request.getParameter("rowid"));
+
+            if(tableName == null || "".equals(tableName) || rowID == 0){
+                result = "Error! Invalid parameters";
+            }else {
+                try {
+                    mainService.setConnection(postgresConnection);
+                    mainService.deleteRowByID(tableName,rowID);
+                    result = "Row was deleted from database!";
+                }catch (Exception e){
+                    result = e.getMessage();
+                }
+            }
+        }else {
+            result = "Cannot connect ot database!";
+        }
+        return result;
+    }
+
+
+    @RequestMapping(value = "updatetablecontents",method = RequestMethod.POST)
+    public String updatetablecontents(HttpSession session, HttpServletRequest request){
+        String result = "";
+        PostgresConnection postgresConnection = (PostgresConnection) session.getAttribute("connection");
+
+        if(postgresConnection != null) {
+            RowContentProperties rowContentProperties = null;
+            try {
+                BufferedReader reader = request.getReader();
+                Gson gson = new Gson();
+                rowContentProperties = gson.fromJson(reader, RowContentProperties.class);
+            }catch (Exception e){
+                result = e.getMessage();
+            }
+
+            if(rowContentProperties != null){
+                try {
+                    mainService.setConnection(postgresConnection);
+                    mainService.updateTableContents(rowContentProperties);
+                    result = "Ok";
+                } catch (Exception e) {
+                    result = e.getMessage();
+                }
+            }
+        }else {
+            result = "Cannot connect ot database!";
+        }
+        return result;
+    }
+
 
 
 

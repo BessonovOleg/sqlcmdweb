@@ -42,9 +42,15 @@ $(window).ready(function(){
 
     //test
     $('#btnTest').on('click',function(){
-        var m = $("#dialogUpdate");
-        m.modal("show");
+        //var m = $("#dialogUpdate");
+        //m.modal("show");
+        alert($('#tblContents .marked').attr('id'));
     });
+
+
+
+    //    alert('We will delete this row');
+
 
 
     //Listener button [delete table]
@@ -102,8 +108,6 @@ function confirmDialog(message, onConfirm){
     $("#confirmCancel").one("click", fClose);
 }
 
-
-
 function createNewTable(){
     $("#tblAddTable tbody tr > td").remove();
     $('#edTblName').val("");
@@ -154,23 +158,62 @@ function createNewTable(){
 }
 
 
+function updateTableContents(rowId){
+    var dlg = $('#dialogUpdate');
+        dlg.modal('show');
+
+    var fClose = function(){
+        dlg.modal("hide");
+    };
+
+    var fDone = function () {
+        var tableName = $("#tblTables .marked");
+        var arrayColumnNames = [];
+        var arrayColumnValues = [];
+
+        if (tableName.length > 0){
+            var columnNameItems = $("#tblContents .marked :input");
+            columnNameItems.each(function () {
+                arrayColumnNames.push($(this).attr('id'));
+                arrayColumnValues.push($(this).val());
+            });
+
+            var data = {
+                rowid:rowId,
+                columnNames:arrayColumnNames,
+                columnValues:arrayColumnValues
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "../rest/updatetablecontents",
+                data:JSON.stringify(data)
+            }).done(function( msg ) {
+                alert(msg);
+            });
+        }
+    };
+
+    $("#dialogUpdateBtnOk").unbind('click');
+    $("#dialogUpdateBtnOk").one('click', fDone);
+    $("#dialogUpdateBtnOk").one('click', fClose);
+    $("#dialogUpdateBtnCancel").one("click", fClose);
+}
 
 
 function fillTableContents(dataTable){
-
     $("#tblContents thead tr > th").remove();
     $("#tblContents tbody > tr").remove();
-
     $("#tblUpdateData thead tr > th").remove();
     $("#tblUpdateData tbody tr > td").remove();
 
     var headers = dataTable.columnCaptions;
     var tableContents = dataTable.data;
-    var rowID = 1;
+    var rowNo = 1;
 
     headers.forEach(function(headCaption){
         $("#tblContents thead tr").append("<th>" + headCaption + "</th>");
-        if(headCaption.toString() != "ID"){
+        if(headCaption.toString().toUpperCase() != "ID"){
             $("#tblUpdateData thead tr").append("<th>" + headCaption + "</th>");
             $("#tblUpdateData tbody tr").append('<td><input type="text" id="' + headCaption + '"></input></td>');
         }
@@ -185,7 +228,7 @@ function fillTableContents(dataTable){
         "<button type='button' id='btnEditRow' class='btn btn-warning'>"+
         "<span class='glyphicon glyphicon glyphicon-pencil' aria-hidden='true'></span>"+
         "</button>"+
-        "<button type='button' id='btnRemoveRow' class='btn btn-danger'>"+
+        "<button type='button' id='btnDeleteRow' class='btn btn-danger'>"+
         "<span class='glyphicon glyphicon-remove' aria-hidden='true'></span>"+
         "</button>"+
         "</div>"+
@@ -194,12 +237,47 @@ function fillTableContents(dataTable){
     }
 
     tableContents.forEach(function (tableData) {
-        $("#tblContents tbody").append("<tr id='rowID"+rowID+"'></tr>>");
+        $("#tblContents tbody").append("<tr id='rowNo"+rowNo+"'></tr>>");
+            var isIdAdded = false;
             tableData.forEach(function (value) {
-                $("#rowID"+ rowID).append("<td>"+value+"</td></td>");
+                if (!isIdAdded){
+                    $("#rowNo"+ rowNo).attr("rowID",value);
+                    isIdAdded = true;
+                }
+                $("#rowNo"+ rowNo).append("<td>"+value+"</td></td>");
             });
-        rowID++;
+        rowNo++;
     });
+
+    //Delete row
+    $('#btnDeleteRow').on('click',function(){
+        var tableName = $("#tblTables .marked");
+        var selectedRow = $('#tblContents .marked');
+
+        if (tableName.length > 0 && selectedRow.length > 0){
+                $.ajax({
+                   type: "POST",
+                   url: "../rest/deleterow",
+                   data: {tblname: tableName.text(),rowid:selectedRow.attr('rowID') }
+                }).done(function( msg ) {
+                   alert(msg);
+                });
+        }
+    });
+
+    //Update row
+    $('#btnEditRow').on('click',function () {
+        var selectedRow = $('#tblContents .marked');
+        if (selectedRow.length > 0){
+            updateTableContents(selectedRow.attr('rowID'));
+        }
+    });
+
+    //Add row
+    $('#btnAddRow').on('click',function () {
+        updateTableContents(0);
+    });
+
+
+
 }
-
-
