@@ -45,7 +45,7 @@
                     </thead>
 
                     <tbody>
-                    <tr></tr>
+                    <tr id="rowForUpdate"></tr>
                     </tbody>
                 </table>
             </div>
@@ -57,10 +57,6 @@
     </div>
 </div>
 <!-- -->
-
-
-
-
 
 <!-- table for create table -->
 <div class="modal" id="dialogCreateTable" style="display: none; z-index: 1048;">
@@ -128,9 +124,6 @@
             </table>
         </div>
     </div >
-
-    <button type="button" id="btnTest" class="btn btn-default">test</button>
-
 </div>
 
 

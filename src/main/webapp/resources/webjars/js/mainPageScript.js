@@ -4,18 +4,7 @@ $(window).ready(function(){
         //Mark selected row in table
         $('#tblTables tr').removeClass('marked');
         $(this).addClass('marked');
-
-        //Load data
-        var tableName = $("#tblTables .marked");
-        if (tableName.length > 0){
-            $.ajax({
-                type: 'GET',
-                url: '../rest/tabledata',
-                data:{tblname:tableName.text()},
-                dataType: "json",
-                success: fillTableContents
-            });
-        }
+        getDataAndFillTableContents();
     });
 
     $('#tblContents tbody').on('click','tr', function() {
@@ -36,22 +25,8 @@ $(window).ready(function(){
 
     $('#dialogUpdate').on('show.bs.modal', function () {
         $('.modal .modal-body').css('overflow-y', 'auto');
-        $('.modal .modal-body').css('max-height', $(window).height() * 0.7);
+        $('.modal .modal-body').css('max-height', $(window).height() * 1);
     });
-
-
-    //test
-    $('#btnTest').on('click',function(){
-        //var m = $("#dialogUpdate");
-        //m.modal("show");
-        alert($('#tblContents .marked').attr('id'));
-    });
-
-
-
-    //    alert('We will delete this row');
-
-
 
     //Listener button [delete table]
     $('#btnRemoveTable').on('click', function(e){
@@ -157,7 +132,6 @@ function createNewTable(){
     $("#dialogAddBtnCancel").one("click", fClose);
 }
 
-
 function updateTableContents(rowId){
     var dlg = $('#dialogUpdate');
         dlg.modal('show');
@@ -166,22 +140,33 @@ function updateTableContents(rowId){
         dlg.modal("hide");
     };
 
+    clearValueInTblUpdate();
+
+    if(rowId > 0) {
+        //load data
+        var cnItems = $("#tblContents .marked td");
+        cnItems.each(function () {
+            setValueInTblUpdate($(this));
+        });
+    }
+
     var fDone = function () {
         var tableName = $("#tblTables .marked");
         var arrayColumnNames = [];
         var arrayColumnValues = [];
 
         if (tableName.length > 0){
-            var columnNameItems = $("#tblContents .marked :input");
+            var columnNameItems = $("#rowForUpdate > td input");
             columnNameItems.each(function () {
                 arrayColumnNames.push($(this).attr('id'));
                 arrayColumnValues.push($(this).val());
             });
 
             var data = {
-                rowid:rowId,
+                rowId:rowId,
                 columnNames:arrayColumnNames,
-                columnValues:arrayColumnValues
+                columnValues:arrayColumnValues,
+                tableName:tableName.text()
             };
 
             $.ajax({
@@ -189,7 +174,8 @@ function updateTableContents(rowId){
                 url: "../rest/updatetablecontents",
                 data:JSON.stringify(data)
             }).done(function( msg ) {
-                alert(msg);
+                getDataAndFillTableContents();
+                //alert(msg);
             });
         }
     };
@@ -237,6 +223,7 @@ function fillTableContents(dataTable){
     }
 
     tableContents.forEach(function (tableData) {
+        var indexColumn = 0;
         $("#tblContents tbody").append("<tr id='rowNo"+rowNo+"'></tr>>");
             var isIdAdded = false;
             tableData.forEach(function (value) {
@@ -244,7 +231,8 @@ function fillTableContents(dataTable){
                     $("#rowNo"+ rowNo).attr("rowID",value);
                     isIdAdded = true;
                 }
-                $("#rowNo"+ rowNo).append("<td>"+value+"</td></td>");
+                $("#rowNo"+ rowNo).append("<td id='"+headers[indexColumn]+"'>"+value+"</td></td>");
+                indexColumn++;
             });
         rowNo++;
     });
@@ -261,6 +249,7 @@ function fillTableContents(dataTable){
                    data: {tblname: tableName.text(),rowid:selectedRow.attr('rowID') }
                 }).done(function( msg ) {
                    alert(msg);
+                   getDataAndFillTableContents();
                 });
         }
     });
@@ -278,6 +267,37 @@ function fillTableContents(dataTable){
         updateTableContents(0);
     });
 
+}
 
 
+function setValueInTblUpdate(data){
+    var contentForUpdate = $('#rowForUpdate > td input');
+
+    contentForUpdate.each(function () {
+        if(data.attr('id') == $(this).attr('id')){
+            $(this).val(data.text());
+        }
+    });
+}
+
+
+function getDataAndFillTableContents() {
+    //Load data
+    var tableName = $("#tblTables .marked");
+    if (tableName.length > 0) {
+        $.ajax({
+            type: 'GET',
+            url: '../rest/tabledata',
+            data: {tblname: tableName.text()},
+            dataType: "json",
+            success: fillTableContents
+        });
+    }
+}
+
+function clearValueInTblUpdate(){
+    var contentForUpdate = $('#rowForUpdate > td input');
+    contentForUpdate.each(function () {
+            $(this).val("");
+    });
 }

@@ -11,7 +11,6 @@ import java.util.List;
 
 @Component
 public class PostgresDatabaseManager {
-
     private String notConnectedText = "Cannot connect to database";
     private Connection connection = null;
 
@@ -48,7 +47,6 @@ public class PostgresDatabaseManager {
 
         return result;
     }
-
 
     public DataTable getDataFromTable(String tableName) {
         if (isConnectionNull()) {
@@ -88,8 +86,6 @@ public class PostgresDatabaseManager {
         return result;
     }
 
-
-
     public String clear(String tableName) {
         if (isConnectionNull()) {
             return notConnectedText;
@@ -124,8 +120,60 @@ public class PostgresDatabaseManager {
         }
     }
 
-    public void updateableContents(RowContentProperties rowContentProperties){
+    public void updateTableContents(RowContentProperties rowContentProperties){
+        if (isConnectionNull()) {
+            throw new RuntimeException("Cannot connect to database");
+        }
 
+        StringBuilder sql = new StringBuilder();
+        String[] columnNames = rowContentProperties.getColumnNames();
+        String[] columnValues = rowContentProperties.getColumnValues();
+
+        //Insert
+        if(rowContentProperties.getRowId() == 0){
+            sql.append("INSERT INTO ");
+            sql.append(rowContentProperties.getTableName());
+            sql.append("(");
+
+            for (int indexCloumns = 0; indexCloumns < columnNames.length; indexCloumns++) {
+                if (indexCloumns > 0) {
+                    sql.append(",");
+                }
+                sql.append(columnNames[indexCloumns]);
+            }
+
+            sql.append(") VALUES (");
+
+            for (int indexValues = 0; indexValues < columnValues.length; indexValues ++) {
+                if (indexValues > 0) {
+                    sql.append(",");
+                }
+                sql.append("'");
+                sql.append(columnValues[indexValues]);
+                sql.append("'");
+            }
+            sql.append(");");
+            executeSql(sql.toString());
+        }else {
+            //Update
+            sql.append("UPDATE ");
+            sql.append(rowContentProperties.getTableName());
+            sql.append(" SET ");
+            for (int indexColumn = 0;indexColumn < columnNames.length;indexColumn++){
+                if(indexColumn > 0){
+                    sql.append(",");
+                }
+                sql.append(columnNames[indexColumn]);
+                sql.append(" ");
+                sql.append("='");
+                sql.append(columnValues[indexColumn]);
+                sql.append("'");
+            }
+
+            sql.append(" where ID = ");
+            sql.append(rowContentProperties.getRowId());
+            executeSql(sql.toString());
+        }
     }
 
     public void deleteRowByID(String tableName,int rowID){
@@ -139,7 +187,6 @@ public class PostgresDatabaseManager {
         String sql = "DELETE FROM " + tableName + " WHERE ID = " + rowID;
         executeSql(sql);
     }
-
 
     private void executeSql(String sql){
         try{
@@ -179,198 +226,9 @@ public class PostgresDatabaseManager {
         executeSql(sql.toString());
     }
 
-
-
-
-    public String insert(String command) {
-        if (isConnectionNull()) {
-            return notConnectedText;
-        }
-
-        StringBuilder result = new StringBuilder();
-        String[] arrayCommand = command.split("[|]");
-        String tableName;
-        StringBuilder sql = new StringBuilder();
-
-        try {
-            tableName = arrayCommand[0];
-            sql.append("INSERT INTO ");
-            sql.append(tableName);
-            sql.append("(");
-
-            for (int indexCloumns = 1; indexCloumns < arrayCommand.length; indexCloumns += 2) {
-                if (indexCloumns > 1) {
-                    sql.append(",");
-                }
-                sql.append(arrayCommand[indexCloumns]);
-            }
-
-            sql.append(") VALUES (");
-
-            for (int indexValues = 2; indexValues < arrayCommand.length; indexValues += 2) {
-                if (indexValues > 2) {
-                    sql.append(",");
-                }
-                sql.append("'");
-                sql.append(arrayCommand[indexValues]);
-                sql.append("'");
-            }
-
-            sql.append(");");
-
-        }catch (Exception ex){
-            return "Ошибка формата команды";
-        }
-
-        try {
-            Statement stm = connection.createStatement();
-            stm.executeUpdate(sql.toString());
-            result.append("Команда выполнена успешно");
-        }catch (SQLException ex){
-            return ("Ошибка вставки:" + ex.getMessage());
-        }
-        return result.toString();
-    }
-
-
-    public ResultSet update(String command) {
-        if (isConnectionNull()) {
-            throw new RuntimeException(notConnectedText);
-        }
-
-        ResultSet rs;
-        String[] arrayCommand = command.split("[|]");
-        String tableName;
-        StringBuilder sqlUpdate = new StringBuilder();
-        StringBuilder sqlWhere  = new StringBuilder();
-        StringBuilder sqlSelect = new StringBuilder();
-
-        try {
-            tableName = arrayCommand[0];
-            sqlUpdate.append("UPDATE ");
-            sqlUpdate.append(tableName);
-            sqlUpdate.append(" set ");
-            sqlSelect.append("select ");
-
-            for (int indexColumn = 1; indexColumn < arrayCommand.length; indexColumn += 4) {
-                if (indexColumn > 1) {
-                    sqlUpdate.append(",");
-                    sqlSelect.append(",");
-                }
-
-                sqlUpdate.append(arrayCommand[indexColumn]);
-                sqlUpdate.append("='");
-                sqlUpdate.append(arrayCommand[indexColumn+1]);
-                sqlUpdate.append("'");
-
-                sqlSelect.append(arrayCommand[indexColumn]);
-            }
-
-            sqlWhere.append(" where ");
-
-            for (int indexValues = 3; indexValues < arrayCommand.length; indexValues += 4) {
-                if (indexValues > 3) {
-                    sqlWhere.append(" and ");
-                }
-                sqlWhere.append(arrayCommand[indexValues]);
-                sqlWhere.append(" = '");
-                sqlWhere.append(arrayCommand[indexValues+1]);
-                sqlWhere.append("'");
-            }
-
-            sqlUpdate.append(sqlWhere.toString());
-
-            sqlSelect.append(" from ");
-            sqlSelect.append(tableName);
-            sqlSelect.append(sqlWhere.toString());
-
-        }catch (Exception ex){
-            throw new RuntimeException("Ошибка формата команды");
-        }
-
-        try {
-            Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery(sqlSelect.toString());
-
-        }catch (SQLException ex){
-            throw new RuntimeException("Ошибка:" + ex.getMessage());
-        }
-
-        try {
-            Statement stm = connection.createStatement();
-            stm.executeUpdate(sqlUpdate.toString());
-        }catch (SQLException ex){
-            throw new RuntimeException("Ошибка обновления:" + ex.getMessage());
-        }
-
-        return rs;
-    }
-
-
-    public ResultSet delete(String command) {
-        if (isConnectionNull()) {
-            throw new RuntimeException(notConnectedText);
-        }
-
-        ResultSet rs;
-        String[] arrayCommand = command.split("[|]");
-        String tableName;
-        StringBuilder sqlDelete = new StringBuilder();
-        StringBuilder sqlSelect = new StringBuilder();
-        StringBuilder sqlWhere  = new StringBuilder();
-
-        try {
-            tableName = arrayCommand[0];
-            sqlDelete.append("Delete from ");
-            sqlDelete.append(tableName);
-            sqlWhere.append(" where ");
-            sqlSelect.append("select ");
-
-            for (int indexColumns = 1; indexColumns < arrayCommand.length; indexColumns += 2) {
-                if (indexColumns > 1) {
-                    sqlWhere.append(" and ");
-                    sqlSelect.append(",");
-                }
-
-                sqlWhere.append(arrayCommand[indexColumns]);
-                sqlWhere.append("='");
-                sqlWhere.append(arrayCommand[indexColumns+1]);
-                sqlWhere.append("'");
-
-                sqlSelect.append(arrayCommand[indexColumns]);
-            }
-
-            sqlSelect.append(" from ");
-            sqlSelect.append(tableName);
-            sqlSelect.append(sqlWhere.toString());
-            sqlDelete.append(sqlWhere.toString());
-
-        }catch (Exception ex){
-            throw new RuntimeException("Ошибка формата команды");
-        }
-
-        try {
-            Statement stmt = connection.createStatement();
-            rs = stmt.executeQuery(sqlSelect.toString());
-        }catch (SQLException ex){
-            throw new RuntimeException("Ошибка:" + ex.getMessage());
-        }
-
-        try {
-            Statement stm = connection.createStatement();
-            stm.executeUpdate(sqlDelete.toString());
-        }catch (SQLException ex){
-            throw new RuntimeException("Ошибка обновления:" + ex.getMessage());
-        }
-
-        return rs;
-    }
-
-
     public boolean isConnectionNull(){
         return (connection == null);
     }
-
 
     public void closeConnection(){
         if(connection!=null){

@@ -65,7 +65,7 @@ public class MainService {
 
     public void updateTableContents(RowContentProperties rowContentProperties){
         try {
-            postgresDatabaseManager.updateableContents(rowContentProperties);
+            postgresDatabaseManager.updateTableContents(rowContentProperties);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
